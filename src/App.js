@@ -1,43 +1,39 @@
 import React, { Component } from 'react';
 import './App.css';
 import {store} from './store'
-import { Menu, Icon } from 'antd';
-import Login from '../src/containers/Login';
+import SearchMaterials from '../src/containers/SearchMaterials';
+import MaterialsMap from '../src/containers/MaterialsMap';
+import MyMaterials from '../src/containers/MyMaterials';
+import Profile from '../src/containers/Profile';
+import Menu from '../src/components/Menu';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import {Provider} from 'react-redux'
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    this.state = {current: 'search-materials'}
+}
+handleClick = (e) => {
+  console.log('click ', e);
+  this.setState({
+    current: e.key,
+  });
 }
   render() {
+
     return (
-      <div>
-      <Provider store={store}>app
+      <Provider store={store}>
         <Router>
           <div>
-            <Menu
-            onClick={this.handleClick}
-            selectedKeys={[this.state.current]}
-            mode="horizontal"
-            >
-              <Menu.Item key="mail">
-                <Icon type="mail" />Navigation One
-              </Menu.Item>
-
-              <Menu.Item key="alipay">
-                <a href="https://ant.design" target="_blank" rel="noopener noreferrer">Navigation Four - Link</a>
-              </Menu.Item>
-            </Menu>
-            <Route path="/app" component={App}/>
-            <Route path="/search-materials" component={Login}/>
-            <Route path="/map-materials" component={Login}/>
-            <Route path="/my-materials" component={Login}/>
-            <Route path="/profile" component={Login}/>
+            <Menu/>
+            
+            <Route path="/app/search-materials" component={SearchMaterials}/>
+            <Route path="/app/materials-map" component={MaterialsMap}/>
+            <Route path="/app/my-materials" component={MyMaterials}/>
+            <Route path="/app/profile" component={Profile}/>
           </div>
         </Router>
       </Provider>
-      </div>
     );
   }
 }
