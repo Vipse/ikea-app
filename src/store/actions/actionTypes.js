@@ -1,0 +1,1 @@
+export const GET_ALL_INTERVALS = 'GET_ALL_INTERVALS'
