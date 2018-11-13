@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Select, Input, DatePicker, Button, Table} from 'antd';
 import './style.css'
 import axios from 'axios'
+import moment from 'moment'
 import { YMaps, Map, Placemark } from 'react-yandex-maps';
 
 const {RangePicker} = DatePicker;
@@ -14,7 +15,10 @@ class SearchTools extends Component {
     constructor(props) {
         super(props);
         this.state={
-            data:[]
+            type:[],
+            volume: '',
+            power: '',
+            date: ''
         }
     }
     handleSubmit = () => {
@@ -31,18 +35,18 @@ class SearchTools extends Component {
                         power: item.resources.power,
                         weight: item.resources.weight || '-',
                         volume: item.resources.volume || '-',
-                        date: item.resources.date,
-                        coordinates: item.resources.factory[0].сompany.сoordinates,
+                        date: moment(+item.resources.date*1000).format("DD.MM.YYYY"),
+                        coordinates: item.resources.factory[0].company.coordinates,
                         // factoryName: item.resources.factory[0]._main.Name,
                         // city: item.resources.factory[0].сompany.city,
                         // address: item.resources.factory[0].сompany.address,
                         // contactFio: item.resources.factory[0].сompany.contactFio,
                         // contactPhone: item.resources.factory[0].сompany.contactPhone,
                         contactInfo: `${item.resources.factory[0]._main.Name},
-                        ${item.resources.factory[0].сompany.city},
-                        ${item.resources.factory[0].сompany.address},
-                        ${item.resources.factory[0].сompany.contactFio},
-                        ${item.resources.factory[0].сompany.contactPhone}`
+                        ${item.resources.factory[0].company.city},
+                        ${item.resources.factory[0].company.address},
+                        ${item.resources.factory[0].company.contactFio},
+                        ${item.resources.factory[0].company.contactPhone}`
 
                     }
                 })
@@ -55,7 +59,7 @@ class SearchTools extends Component {
             })
     }
     handleChange = (value) => {
-        console.log(`${value}`);
+        console.log(value);
     }
     render() {
         const dataSource = this.state.data;
@@ -84,20 +88,7 @@ class SearchTools extends Component {
             title: 'Contact Info',
             dataIndex: 'contactInfo',
             key: 'contactInfo',
-        }, /*{
-            title: 'Weight',
-            dataIndex: 'weight',
-            key: 'weight',
-        }, {
-            title: 'Weight',
-            dataIndex: 'weight',
-            key: 'weight',
-        }, {
-            title: 'Weight',
-            dataIndex: 'weight',
-            key: 'weight',
-        },*/
-        ];
+        }];
 
 
         return (
@@ -123,7 +114,7 @@ class SearchTools extends Component {
 
                     />
                     <RangePicker
-                        onChange={this.handleChange}
+                        onChange={val => this.handleChange(val, "date")}
                         style={{width: "40%"}}
 
 
@@ -134,7 +125,7 @@ class SearchTools extends Component {
                     <YMaps>
                         <Map defaultState={{ center: [25.545,24.4343], zoom: 4 }}
                              width='100%'
-                             height={600}
+                             height={500}
 
                         >
                             {this.state.data && this.state.data.map((item,index)=>{

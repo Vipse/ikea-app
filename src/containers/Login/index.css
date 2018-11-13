@@ -1,0 +1,12 @@
+.LoginPage {
+    width: 30%;
+    margin: 100px auto;
+    display: flex;
+    flex-direction: column;
+}
+.LoginPage .title {
+    font-size: 40px;
+}
+.LoginPage input {
+    margin-bottom: 30px
+}

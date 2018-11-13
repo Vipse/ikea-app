@@ -1,0 +1,28 @@
+.headerMenu {
+    width: 100%;
+    
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 20px;
+
+}
+.headerMenu .container {
+    width: 70%;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.headerMenu ul.ant-menu-horizontal {
+    border-bottom: none;
+}
+.headerMenu .authTools {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+}
+.headerMenu .authTools button {
+    margin-left: 30px;
+}
+.rightNav {
+    display: flex
+}
