@@ -19,8 +19,53 @@ class SearchTools extends Component {
             volume: '',
             factory: '',
             date: [],
-            factories: []
+            factories: [],
+            factoryMaterials: []
         }
+    }
+    getFactoryMaterials = (id) => {
+        const obj = {
+            filter: {
+                factory: id
+            }
+        }
+        axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
+            .then(res => {
+                console.log(res);
+                const catalog = res.data.document.modules["content-catalog"];
+
+                console.log(res, "RES GETING");
+                console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
+
+                let parsedData;
+                if(catalog[Object.keys(catalog)[0]].output.objects.length) {
+
+                    parsedData = catalog[Object.keys(catalog)[0]].output.objects.filter(item => item.resources.factory).map((item, index) => {
+                        console.log("map", item);
+                        return {
+                            key: index,
+                            resource: item.resources.type.selector.val,
+                            power: item.resources.power,
+                            weight: item.resources.weight || '-',
+                            volume: item.resources.volume || '-',
+                            contactInfo: `${item.resources.factory[0]._main.Name},
+                            ${item.resources.factory[0].company.city},
+                            ${item.resources.factory[0].company.address},
+                            ${item.resources.factory[0].company.contactFio},
+                            ${item.resources.factory[0].company.contactPhone}`
+                        }
+                    })
+                } else {
+                    parsedData = [];
+                }
+                console.log(parsedData, "PARSED DATA")
+                this.setState({factoryMaterials:parsedData})
+                console.log(parsedData);
+
+            })
+            .catch(err => {
+                this.setState({factoryMaterials:[]})
+            })
     }
     handleSubmit = () => {
         console.log("SEARCH STATE")
@@ -56,10 +101,6 @@ class SearchTools extends Component {
                 if(catalog[Object.keys(catalog)[0]].output.objects.length) {
                 
                 parsedData = catalog[Object.keys(catalog)[0]].output.objects.filter(item => item.resources.factory).map((item, index) => {
-                    console.log("map", item);
-                    if(item.resources.factory === false) {
-                        return
-                    }
                     return {
                         key: index,
                         resource: item.resources.type.selector.val,
@@ -101,6 +142,8 @@ class SearchTools extends Component {
     render() {
         console.log(this.state.factories, "FACTORIES")
         const dataSource = this.state.data;
+        const factoryMaterialsSource = this.state.factoryMaterials;
+
 
         const columns = [{
             title: 'Resource',
@@ -127,6 +170,19 @@ class SearchTools extends Component {
             dataIndex: 'contactInfo',
             key: 'contactInfo',
         }];
+        const columnsFactoryMaterials = [{
+            title: 'Resource',
+            dataIndex: 'resource',
+            key: 'resource',
+        }, {
+            title: 'Weight',
+            dataIndex: 'weight',
+            key: 'weight',
+        }, {
+            title: 'Volume',
+            dataIndex: 'volume',
+            key: 'volume',
+        }];
 
 
         return (
@@ -140,7 +196,7 @@ class SearchTools extends Component {
                         onChange={val=>this.handleChange(val, "type")}
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
-                        <Option value=""></Option>
+                        <Option value="">Select material</Option>
                         <Option value="76539">Wood</Option>
                         <Option value="76541">Glass</Option>
                         <Option value="76538">Metal</Option>
@@ -154,9 +210,9 @@ class SearchTools extends Component {
                         onChange={val=>this.handleChange(val, "factory")}
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
+                        <Option value=''>Select factory</Option>
                         {this.state.factories.length && this.state.factories.map((item, index)=>{
-                            console.log(item, "ITEM FACT")
-                            return <Option key={index} value={item.object.id}>{item.object.params.Name}</Option>
+                            return <Option key={index} value={item.value._main.id}>{item.value._main.Name}</Option>
                         })}
                     </Select>
                     <Input placeholder="Volume needs, m3"
@@ -175,22 +231,29 @@ class SearchTools extends Component {
                 </div>
                 <Button type='primary' size="large" onClick={this.handleSubmit}>Search</Button>
                 {this.props.list ? <Table dataSource={dataSource} columns={columns} style={{width:"100%"}} pagination={false}/>:
-                    <YMaps>
-                        <Map defaultState={{ center: [25,25], zoom: 1 }}
-                             width='100%'
-                             height={400}
+                    <div style={{width: '100%'}} className='mapAndTable'>
+                        <YMaps>
+                            <Map defaultState={{ center: [25,25], zoom: 1 }}
+                                 width='70%'
+                                 height={500}
 
-                        >
-                            {this.state.data && this.state.data.map((item,index)=>{
-                                console.log(item, "ITEM PLACEMARK")
-                                return <Placemark
-                                key={index}
-                                defaultGeometry={item.coordinates.split(",")}
-                                defaultProperties={{hintContent:"123123123", balloonContent: "sdfjksdfjh"}}
+                            >
+                                {this.state.data && this.state.factories.map((item, index) => {
+                                    const factoryId=item.value._main.id;
+                                    return <Placemark
+                                        onClick={()=>{this.getFactoryMaterials(factoryId)}}
+                                        key={index}
+                                        defaultGeometry={item.value.company.coordinates.split(",")}
+                                    />
+                                })}
+                            </Map>
+                        </YMaps>
+                        {this.state.factoryMaterials.length > 0 && <div style={{width: "30%"}}>
+                            <div className='contactInfo'>{this.state.factoryMaterials[0].contactInfo}</div>
+                            <Table dataSource={factoryMaterialsSource} columns={columnsFactoryMaterials} style={{width:"100%"}} pagination={false}/>
 
-                                />})}
-                        </Map>
-                    </YMaps>
+                        </div>}
+                    </div>
 
 
                 }
