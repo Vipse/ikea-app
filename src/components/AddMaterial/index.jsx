@@ -16,7 +16,8 @@ class AddMaterial extends Component {
             type:'',
             volume: '',
             power: '',
-            date: ''
+            date: '',
+            data: []
         }
     }
     handleSubmit = () => {
@@ -55,13 +56,20 @@ class AddMaterial extends Component {
     }
 
     componentDidMount() {
-        const obj = {
-            "url": "/catalog"
-        };
-        axios.post('http://178.172.201.108/~api/json/pages/headlessRoute', JSON.stringify(obj))
+        let obj;
+        if(window.localStorage.getItem("userId")) {
+            obj = {filter: {
+                user: window.localStorage.getItem("userId")
+            }}
+        }
+        
+        axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
-                console.log(res.data.document.modules["content-catalog"][13994].output.objects, "RESULT OF GETTING ALL MATERIALS");
-                let parsedData = res.data.document.modules["content-catalog"][13994].output.objects.map((item, index) => {
+                console.log(res, "RES GETING");
+                console.log(res.data.document.modules["content-catalog"][14010].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                let parsedData;
+                if(res.data.document.modules["content-catalog"][14010].output.objects.length) {
+                parsedData = res.data.document.modules["content-catalog"][14010].output.objects.map((item, index) => {
                     return {
                         key: index,
                         resource: item.resources.type.selector.val,
@@ -83,14 +91,17 @@ class AddMaterial extends Component {
 
                     }
                 })
+            } else {
+                parsedData = [];
+            }
                 this.setState({data:parsedData})
                 console.log(parsedData);
 
             })
             .catch(err => {
-                console.log(err);
+                this.setState({data:[]}) 
             })
-    }
+        }
     render() {
         const dataSource = this.state.data;
 
