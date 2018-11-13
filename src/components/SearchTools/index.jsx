@@ -133,6 +133,22 @@ class SearchTools extends Component {
                             //     ${item.resources.factory[0].company.contactFio},
                             //     ${item.resources.factory[0].company.contactPhone}`
                             // }
+                        } else if (this.props.list) {
+                            parsedData.push({
+                                resource: item.resources.type.selector.val,
+                                power: item.resources.power,
+                                weight: item.resources.weight || '-',
+                                volume: item.resources.volume || '-',
+                                date: moment(+item.resources.date * 1000).format("DD.MM.YYYY"),
+                                coordinates: item.resources.factory[0].company.coordinates,
+                                factoryId: item.resources.factory[0]._main.id,
+                                contactInfo: `${item.resources.factory[0]._main.Name},
+                        ${item.resources.factory[0].company.city},
+                        ${item.resources.factory[0].company.address},
+                        ${item.resources.factory[0].company.contactFio},
+                        ${item.resources.factory[0].company.contactPhone}`
+
+                            })
                         }
                     })
                 } else {
