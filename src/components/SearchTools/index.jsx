@@ -68,7 +68,6 @@ class SearchTools extends Component {
             })
     }
     handleSubmit = () => {
-        console.log("SEARCH STATE")
         const obj = {};
         if(this.state.type || this.state.volume || this.state.date.length || this.state.factory) {
             obj.filter = {};
