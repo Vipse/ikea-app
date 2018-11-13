@@ -19,10 +19,10 @@ class Menu extends Component {
     }
     logOut = () => {
         window.localStorage.clear();
-        window.location = "/app/login"
     }
     render() {
         const isAuth = window.localStorage.getItem("userId") !== null;
+        const userName = window.localStorage.getItem("userName");
         return (
             <div className='headerMenu'>
             <div className="container">
@@ -49,15 +49,15 @@ class Menu extends Component {
                         <Antdmenu.Item key='/app/my-materials'>
                             <Link to='/app/my-materials'>My materials</Link>
                         </Antdmenu.Item>
-                        <Antdmenu.Item key='/app/profile'>
+                        {/* <Antdmenu.Item key='/app/profile'>
                             <Link to='/app/profile'>Profile</Link>
-                        </Antdmenu.Item>
+                        </Antdmenu.Item> */}
                 </Antdmenu>
                 <div className="authTools">
-                    {isAuth?<div>Name</div>:null}
+                    {isAuth?<div className='userName'>{userName}</div>:null}
 
-                {isAuth?<Button type="danger" onClick={this.logOut}>Logout</Button>:
-                <Button type="primary" onClick={this.logOut}><Link to='/app/login'>Login</Link></Button>}
+                {isAuth?<Link to='/app/login'><Button type="danger" onClick={this.logOut}>Sign Out</Button></Link>:
+                <Link to='/app/login'><Button type="primary">Sign In</Button></Link>}
                 </div>
                 </div>
                 </div>

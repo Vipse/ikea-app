@@ -114,10 +114,6 @@ class AddMaterial extends Component {
             title: 'Date',
             dataIndex: 'date',
             key: 'date',
-        }, {
-            title: 'Contact Info',
-            dataIndex: 'contactInfo',
-            key: 'contactInfo',
         }];
         return (
             <div className='SearchTools'>

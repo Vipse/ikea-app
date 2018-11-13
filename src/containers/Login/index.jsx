@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './index.css';
 import { Input, Button, message } from 'antd';
+import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 class Login extends Component {
@@ -28,6 +29,7 @@ class Login extends Component {
                   message.error("Login or password is incorrect")
                 } else {
                   window.localStorage.setItem("userId", res.data.user.id);
+                  window.localStorage.setItem("userName", res.data.user.params.name+" "+res.data.user.params.surname);
                   window.location = "/app/my-materials"
                 }
             })
@@ -40,6 +42,9 @@ class Login extends Component {
     this.setState({[field]:val})
   }
   render() {
+    if(window.localStorage.getItem("userId")) {
+      return <Redirect to='/app/my-materials'/>
+    }
     return (
       <div className="LoginPage">
         <div className="title">Sign In</div>

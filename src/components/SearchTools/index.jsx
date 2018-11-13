@@ -15,17 +15,31 @@ class SearchTools extends Component {
     constructor(props) {
         super(props);
         this.state={
-            type:[],
+            type:'',
             volume: '',
-            power: '',
-            date: ''
+            date: []
         }
     }
     handleSubmit = () => {
-        const obj = {
-            "url": "/catalog"
-        };
-        axios.post('http://178.172.201.108/~api/json/pages/headlessRoute', JSON.stringify(obj))
+        console.log("SEARCH STATE")
+        const obj = {};
+        // if(this.state.type || this.state.volume || this.state.date.length) {
+        //     obj.filter = {};
+        // }
+        // if(this.state.type) {
+        //     obj.filter.type = this.state.type
+        // }
+        // if(this.state.volume) {
+        //     obj.filter.volume = this.state.volume
+        // }
+        // if(this.state.date.length) {
+        //     obj.filter.date=[];
+        //     obj.filter.date[0] = moment(this.state.date[0]).format("X");
+        //     obj.filter.date[1] = moment(this.state.date[1]).format("X");
+        // }
+
+        console.log(obj, "OBJ TO SEND");
+        axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
                 console.log(res.data.document.modules["content-catalog"][13994].output.objects, "RESULT OF GETTING ALL MATERIALS");
                 let parsedData = res.data.document.modules["content-catalog"][13994].output.objects.map((item, index) => {
@@ -58,8 +72,15 @@ class SearchTools extends Component {
                 console.log(err);
             })
     }
-    handleChange = (value) => {
-        console.log(value);
+    handleChangeDate = (date, dateString) => {
+        this.setState({date: date})
+    }
+    handleChange = (value, field) => {
+        this.setState({[field]: value})
+        console.log(`${value}`);
+    }
+    componentDidMount() {
+        this.handleSubmit();
     }
     render() {
         const dataSource = this.state.data;
@@ -99,7 +120,7 @@ class SearchTools extends Component {
                         style={{width: "30%", marginRight: "5%"}}
                         placeholder="Select material"
                         optionFilterProp="children"
-                        onChange={this.handleChange}
+                        onChange={val=>this.handleChange(val, "type")}
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
                         <Option value="76539">Wood</Option>
@@ -107,14 +128,15 @@ class SearchTools extends Component {
                         <Option value="76538">Metal</Option>
                         <Option value="76540">Plastic</Option>
                     </Select>
-                    <Input placeholder="Needs in kgs"
-                           onChange={this.handleChange}
+                    <Input placeholder="Volume needs, m3"
+                           onChange={e=>this.handleChange(e.target.value, 'volume')}
                            style={{width: "20%", marginRight: "5%"}}
+                           type='number'
 
 
                     />
                     <RangePicker
-                        onChange={val => this.handleChange(val, "date")}
+                        onChange={this.handleChangeDate}
                         style={{width: "40%"}}
 
 
@@ -123,9 +145,9 @@ class SearchTools extends Component {
                 <Button type='primary' size="large" onClick={this.handleSubmit}>Search</Button>
                 {this.props.list ? <Table dataSource={dataSource} columns={columns} style={{width:"100%"}} pagination={false}/>:
                     <YMaps>
-                        <Map defaultState={{ center: [25.545,24.4343], zoom: 4 }}
+                        <Map defaultState={{ center: [25,25], zoom: 1 }}
                              width='100%'
-                             height={500}
+                             height={400}
 
                         >
                             {this.state.data && this.state.data.map((item,index)=>{

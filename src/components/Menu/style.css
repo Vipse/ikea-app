@@ -19,10 +19,15 @@
     display: flex;
     align-items: center;
     flex-direction: row;
+    margin-left: 20px;
 }
 .headerMenu .authTools button {
     margin-left: 30px;
 }
 .rightNav {
     display: flex
+}
+.userName {
+    color: #CCC;
+    font-size: 12px;
 }
