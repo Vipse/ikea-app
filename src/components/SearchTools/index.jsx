@@ -41,11 +41,18 @@ class SearchTools extends Component {
         console.log(obj, "OBJ TO SEND");
         axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
+                const catalog = res.data.document.modules["content-catalog"];
+
                 console.log(res, "RES GETING");
-                console.log(res.data.document.modules["content-catalog"][14010].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
                 let parsedData;
-                if(res.data.document.modules["content-catalog"][14010].output.objects.length) {
-                parsedData = res.data.document.modules["content-catalog"][14010].output.objects.map((item, index) => {
+                if(catalog[Object.keys(catalog)[0]].output.objects.length) {
+                
+                parsedData = catalog[Object.keys(catalog)[0]].output.objects.filter(item => item.resources.factory).map((item, index) => {
+                    console.log("map", item);
+                    if(item.resources.factory === false) {
+                        return
+                    }
                     return {
                         key: index,
                         resource: item.resources.type.selector.val,
@@ -54,11 +61,6 @@ class SearchTools extends Component {
                         volume: item.resources.volume || '-',
                         date: moment(+item.resources.date*1000).format("DD.MM.YYYY"),
                         coordinates: item.resources.factory[0].company.coordinates,
-                        // factoryName: item.resources.factory[0]._main.Name,
-                        // city: item.resources.factory[0].сompany.city,
-                        // address: item.resources.factory[0].сompany.address,
-                        // contactFio: item.resources.factory[0].сompany.contactFio,
-                        // contactPhone: item.resources.factory[0].сompany.contactPhone,
                         contactInfo: `${item.resources.factory[0]._main.Name},
                         ${item.resources.factory[0].company.city},
                         ${item.resources.factory[0].company.address},
@@ -70,6 +72,7 @@ class SearchTools extends Component {
             } else {
                 parsedData = [];
             }
+                console.log(parsedData, "PARSED DATA")
                 this.setState({data:parsedData})
                 console.log(parsedData);
 
@@ -108,7 +111,7 @@ class SearchTools extends Component {
             dataIndex: 'volume',
             key: 'volume',
         }, {
-            title: 'Date',
+            title: 'Avail. date',
             dataIndex: 'date',
             key: 'date',
         }, {

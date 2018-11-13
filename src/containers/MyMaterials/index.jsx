@@ -9,7 +9,7 @@ class MyMaterials extends Component {
     const isAuth = window.localStorage.getItem("userId") !==null
     return (
       <div className="MyMaterials">
-          <span className='title'>My Materials</span>
+          <span className='title'>Add new material</span>
           {isAuth?<AddMaterial/>:
             <div>
               <span className='title'>You are not authorized</span><br/>

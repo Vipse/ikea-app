@@ -16,13 +16,13 @@ class AddMaterial extends Component {
             type:'',
             volume: '',
             power: '',
-            date: '',
+            date: moment(),
             data: []
         }
     }
     handleSubmit = () => {
         console.log(this.state, "STATE", "ADD ITEM");
-        if(!this.state.type || !this.state.volume || !this.state.power || !this.state.date) {
+        if(!this.state.type || !this.state.volume || !this.state.power || !this.state.date || !this.state.weight) {
             message.error("Please, fill all fields")
             return
         }
@@ -35,18 +35,26 @@ class AddMaterial extends Component {
                 "resources.date": moment(this.state.date).format("X"),
                 "resources.volume": this.state.volume,
                 "resources.power": this.state.power,
-                "resources.weight": "",
+                "resources.weight": this.state.weight,
                 "resources.owner": "[\"76531\"]",
-                "resources.factory": "[\"76532\"]",
+                "resources.factory": "[\"76553\"]",
                 "PropertySetGroup": "4168",
                 "Name": `${moment().format("X")}`
             }
         }
         console.log(dataToSend, "datatosend")
-        //http://178.172.201.108/~api/json/catalog/createNewObject
         axios.post('http://178.172.201.108/~api/json/catalog/createNewObject', JSON.stringify(dataToSend))
             .then(res => {
                 console.log(res, "RESPONSE ADDING ITEM")
+                if(res.status === 200) {
+                    message.success("Resource succesfully added")
+                } else {
+                    message.error("Add resource - failed")
+
+                }
+                this.clearAdminCache().then((res)=>{
+                    this.getData();
+                });
             })
             .catch(err => console.log(err, "ERROR"))
     }
@@ -54,8 +62,11 @@ class AddMaterial extends Component {
         this.setState({[field]: value})
         console.log(`${value}`);
     }
-
-    componentDidMount() {
+    clearAdminCache = () => {
+        console.log("clear cache")
+        return axios.post('http://178.172.201.108/~api/json/catalog.ikea/clearCache');
+    }
+    getData = () => {
         let obj;
         if(window.localStorage.getItem("userId")) {
             obj = {filter: {
@@ -65,11 +76,13 @@ class AddMaterial extends Component {
         
         axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
-                console.log(res, "RES GETING");
-                console.log(res.data.document.modules["content-catalog"][14010].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                console.log(res, "RES OF GETTING MY MATERIALS")
+                const catalog = res.data.document.modules["content-catalog"];
+                console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
                 let parsedData;
-                if(res.data.document.modules["content-catalog"][14010].output.objects.length) {
-                parsedData = res.data.document.modules["content-catalog"][14010].output.objects.map((item, index) => {
+                if(catalog[Object.keys(catalog)[0]].output.objects.length) {
+                parsedData = catalog[Object.keys(catalog)[0]].output.objects.filter(item => item.resources.factory).map((item, index) => {
+                    console.log("map")
                     return {
                         key: index,
                         resource: item.resources.type.selector.val,
@@ -78,22 +91,19 @@ class AddMaterial extends Component {
                         volume: item.resources.volume || '-',
                         date: moment(+item.resources.date*1000).format("DD.MM.YYYY"),
                         coordinates: item.resources.factory[0].company.coordinates,
-                        // factoryName: item.resources.factory[0]._main.Name,
-                        // city: item.resources.factory[0].сompany.city,
-                        // address: item.resources.factory[0].сompany.address,
-                        // contactFio: item.resources.factory[0].сompany.contactFio,
-                        // contactPhone: item.resources.factory[0].сompany.contactPhone,
+                        id: item.resources.factory[0]._main.id,
                         contactInfo: `${item.resources.factory[0]._main.Name},
                         ${item.resources.factory[0].company.city},
                         ${item.resources.factory[0].company.address},
                         ${item.resources.factory[0].company.contactFio},
-                        ${item.resources.factory[0].company.contactPhone}`
+                        ${item.resources.factory[0].company.contactPhone}`,
 
                     }
                 })
             } else {
                 parsedData = [];
             }
+                console.log("PARSED DATA MY ITEMS", parsedData)
                 this.setState({data:parsedData})
                 console.log(parsedData);
 
@@ -101,7 +111,21 @@ class AddMaterial extends Component {
             .catch(err => {
                 this.setState({data:[]}) 
             })
-        }
+    }
+    componentDidMount() {
+        this.getData();
+    }
+    handleDelete = (record) => {
+        axios.delete(`http://178.172.201.108/~api/json/catalog/deleteObject/id/${record.id}`)
+        .then(()=>{
+            this.clearAdminCache();
+        })
+        .then(()=> {
+            this.getData();
+        })
+
+
+    }
     render() {
         const dataSource = this.state.data;
 
@@ -122,16 +146,24 @@ class AddMaterial extends Component {
             dataIndex: 'volume',
             key: 'volume',
         }, {
-            title: 'Date',
+            title: 'Avail. date',
             dataIndex: 'date',
             key: 'date',
-        }];
+        }, {
+            title: 'Delete',
+            dataIndex: 'delete',
+            key: 'delete',
+            render: (text, record) => {
+                return <Button className='delete' type="danger" onClick={()=>this.handleDelete(record)}>Delete</Button>
+            }
+        },
+    ];
         return (
             <div className='SearchTools'>
                 <div className='dataGetters'>
                     <Select
                         showSearch
-                        style={{width: "25%", marginRight: "5%"}}
+                        style={{width: "20%", marginRight: "5%"}}
                         placeholder="Select material"
                         optionFilterProp="children"
                         onChange={(val)=>this.handleChange(val, 'type')}
@@ -155,10 +187,18 @@ class AddMaterial extends Component {
                            type='number'
 
                     />
+                    <Input placeholder="weight, kg"
+                           onChange={(e)=>this.handleChange(e.target.value, "weight")}
+                           style={{width: "20%", marginRight: "5%"}}
+                           value={this.state.weight}
+                           type='number'
+
+                    />
 
                     <DatePicker
                         onChange={(val)=>this.handleChange(val, 'date')}
-                        style={{width: "35%"}}
+                        style={{width: "20%"}}
+                        defaultValue={this.state.date}
                     />
                 </div>
                 <Button type='primary' size="large" onClick={this.handleSubmit}>Add</Button>

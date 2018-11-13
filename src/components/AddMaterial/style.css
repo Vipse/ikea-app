@@ -13,3 +13,6 @@
 .SearchTools button {
     width: 20%;
 }
+.SearchTools button.delete {
+    width: 100%;
+}
