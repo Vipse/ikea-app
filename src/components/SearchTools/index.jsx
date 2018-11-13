@@ -82,6 +82,7 @@ class SearchTools extends Component {
 
         axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
+                console.log("RES GETTING MATERIALS", res);
                 const catalog = res.data.document.modules["content-catalog"];
 
 

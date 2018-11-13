@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0c58af37-86a6-445c-87f1-47bf8823d45c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/SearchTools/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SearchTools/index.jsx" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
@@ -47,13 +46,13 @@
         <counts>
           <entry key="css" value="279" />
           <entry key="js" value="186" />
-          <entry key="jsx" value="2728" />
+          <entry key="jsx" value="2776" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="279" />
-          <entry key="JSX Harmony" value="2728" />
+          <entry key="JSX Harmony" value="2776" />
           <entry key="JavaScript" value="186" />
         </counts>
       </usages-collector>
@@ -92,8 +91,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/components/SearchTools/index.jsx">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="367">
-              <caret line="102" column="80" selection-start-line="102" selection-start-column="80" selection-end-line="102" selection-end-column="80" />
+            <state relative-caret-position="272">
+              <caret line="84" column="58" selection-start-line="84" selection-start-column="58" selection-end-line="84" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -315,12 +314,12 @@
       <updated>1542049171892</updated>
       <workItem from="1542049173445" duration="9507000" />
       <workItem from="1542134998536" duration="4147000" />
-      <workItem from="1542148673491" duration="3679000" />
+      <workItem from="1542148673491" duration="3911000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="17333000" />
+    <option name="totallyTimeSpent" value="17565000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -468,8 +467,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/components/SearchTools/index.jsx">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="367">
-          <caret line="102" column="80" selection-start-line="102" selection-start-column="80" selection-end-line="102" selection-end-column="80" />
+        <state relative-caret-position="272">
+          <caret line="84" column="58" selection-start-line="84" selection-start-column="58" selection-end-line="84" selection-end-column="58" />
         </state>
       </provider>
     </entry>
