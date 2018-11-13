@@ -17,17 +17,22 @@ class SearchTools extends Component {
         this.state={
             type:'',
             volume: '',
-            date: []
+            factory: '',
+            date: [],
+            factories: []
         }
     }
     handleSubmit = () => {
         console.log("SEARCH STATE")
         const obj = {};
-        if(this.state.type || this.state.volume || this.state.date.length) {
+        if(this.state.type || this.state.volume || this.state.date.length || this.state.factory) {
             obj.filter = {};
         }
         if(this.state.type) {
             obj.filter.type = this.state.type
+        }
+        if(this.state.factory) {
+            obj.filter.factory = this.state.factory
         }
         if(this.state.volume) {
             obj.filter.volume = this.state.volume
@@ -45,6 +50,8 @@ class SearchTools extends Component {
 
                 console.log(res, "RES GETING");
                 console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                
+                this.setState({factories: catalog[Object.keys(catalog)[1]].output.matrix['resources.factoryasc'].filterValues})
                 let parsedData;
                 if(catalog[Object.keys(catalog)[0]].output.objects.length) {
                 
@@ -92,6 +99,7 @@ class SearchTools extends Component {
         this.handleSubmit();
     }
     render() {
+        console.log(this.state.factories, "FACTORIES")
         const dataSource = this.state.data;
 
         const columns = [{
@@ -126,16 +134,30 @@ class SearchTools extends Component {
                 <div className='dataGetters'>
                     <Select
                         showSearch
-                        style={{width: "30%", marginRight: "5%"}}
+                        style={{width: "15%", marginRight: "5%"}}
                         placeholder="Select material"
                         optionFilterProp="children"
                         onChange={val=>this.handleChange(val, "type")}
                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     >
+                        <Option value=""></Option>
                         <Option value="76539">Wood</Option>
                         <Option value="76541">Glass</Option>
                         <Option value="76538">Metal</Option>
                         <Option value="76540">Plastic</Option>
+                    </Select>
+                    <Select
+                        showSearch
+                        style={{width: "15%", marginRight: "5%"}}
+                        placeholder="Select factory"
+                        optionFilterProp="children"
+                        onChange={val=>this.handleChange(val, "factory")}
+                        filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                    >
+                        {this.state.factories.length && this.state.factories.map((item, index)=>{
+                            console.log(item, "ITEM FACT")
+                            return <Option key={index} value={item.object.id}>{item.object.params.Name}</Option>
+                        })}
                     </Select>
                     <Input placeholder="Volume needs, m3"
                            onChange={e=>this.handleChange(e.target.value, 'volume')}
@@ -160,6 +182,7 @@ class SearchTools extends Component {
 
                         >
                             {this.state.data && this.state.data.map((item,index)=>{
+                                console.log(item, "ITEM PLACEMARK")
                                 return <Placemark
                                 key={index}
                                 defaultGeometry={item.coordinates.split(",")}
