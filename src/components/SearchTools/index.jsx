@@ -23,26 +23,29 @@ class SearchTools extends Component {
     handleSubmit = () => {
         console.log("SEARCH STATE")
         const obj = {};
-        // if(this.state.type || this.state.volume || this.state.date.length) {
-        //     obj.filter = {};
-        // }
-        // if(this.state.type) {
-        //     obj.filter.type = this.state.type
-        // }
-        // if(this.state.volume) {
-        //     obj.filter.volume = this.state.volume
-        // }
-        // if(this.state.date.length) {
-        //     obj.filter.date=[];
-        //     obj.filter.date[0] = moment(this.state.date[0]).format("X");
-        //     obj.filter.date[1] = moment(this.state.date[1]).format("X");
-        // }
+        if(this.state.type || this.state.volume || this.state.date.length) {
+            obj.filter = {};
+        }
+        if(this.state.type) {
+            obj.filter.type = this.state.type
+        }
+        if(this.state.volume) {
+            obj.filter.volume = this.state.volume
+        }
+        if(this.state.date.length) {
+            obj.filter.date=[];
+            obj.filter.date[0] = +moment(this.state.date[0]).format("X");
+            obj.filter.date[1] = +moment(this.state.date[1]).format("X");
+        }
 
         console.log(obj, "OBJ TO SEND");
         axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
-                console.log(res.data.document.modules["content-catalog"][13994].output.objects, "RESULT OF GETTING ALL MATERIALS");
-                let parsedData = res.data.document.modules["content-catalog"][13994].output.objects.map((item, index) => {
+                console.log(res, "RES GETING");
+                console.log(res.data.document.modules["content-catalog"][14010].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                let parsedData;
+                if(res.data.document.modules["content-catalog"][14010].output.objects.length) {
+                parsedData = res.data.document.modules["content-catalog"][14010].output.objects.map((item, index) => {
                     return {
                         key: index,
                         resource: item.resources.type.selector.val,
@@ -64,12 +67,15 @@ class SearchTools extends Component {
 
                     }
                 })
+            } else {
+                parsedData = [];
+            }
                 this.setState({data:parsedData})
                 console.log(parsedData);
 
             })
             .catch(err => {
-                console.log(err);
+                this.setState({data:[]}) 
             })
     }
     handleChangeDate = (date, dateString) => {
