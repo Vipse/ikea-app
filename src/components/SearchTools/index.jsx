@@ -117,22 +117,6 @@ class SearchTools extends Component {
                         ${item.resources.factory[0].company.contactPhone}`
 
                             })
-                            // } else if (!this.props.list) {
-                            //     factoryIds.push(item.resources.factory[0]._main.id);
-                            //     parsedData.push({
-                            //         resource: item.resources.type.selector.val,
-                            //         power: item.resources.power,
-                            //         weight: item.resources.weight || '-',
-                            //         volume: item.resources.volume || '-',
-                            //         date: moment(+item.resources.date*1000).format("DD.MM.YYYY"),
-                            //         coordinates: item.resources.factory[0].company.coordinates,
-                            //         factoryId: item.resources.factory[0]._main.id,
-                            //         contactInfo: `${item.resources.factory[0]._main.Name},
-                            //     ${item.resources.factory[0].company.city},
-                            //     ${item.resources.factory[0].company.address},
-                            //     ${item.resources.factory[0].company.contactFio},
-                            //     ${item.resources.factory[0].company.contactPhone}`
-                            // }
                         } else if (this.props.list) {
                             parsedData.push({
                                 resource: item.resources.type.selector.val,
@@ -183,15 +167,15 @@ class SearchTools extends Component {
             dataIndex: 'resource',
             key: 'resource',
         }, {
-            title: 'Power',
+            title: 'Power, volume/day',
             dataIndex: 'power',
             key: 'power',
         }, {
-            title: 'Weight',
+            title: 'Weight, kg',
             dataIndex: 'weight',
             key: 'weight',
         }, {
-            title: 'Volume',
+            title: 'Volume, m3',
             dataIndex: 'volume',
             key: 'volume',
         }, {
@@ -202,17 +186,18 @@ class SearchTools extends Component {
             title: 'Contact Info',
             dataIndex: 'contactInfo',
             key: 'contactInfo',
+            width: 300
         }];
         const columnsFactoryMaterials = [{
             title: 'Resource',
             dataIndex: 'resource',
             key: 'resource',
         }, {
-            title: 'Weight',
+            title: 'Weight, kg',
             dataIndex: 'weight',
             key: 'weight',
         }, {
-            title: 'Volume',
+            title: 'Volume, m3',
             dataIndex: 'volume',
             key: 'volume',
         }];
@@ -223,7 +208,7 @@ class SearchTools extends Component {
                 <div className='dataGetters'>
                     <Select
                         showSearch
-                        style={{width: "15%", marginRight: "5%"}}
+                        style={{width: "15%", marginRight: "3%"}}
                         placeholder="Select material"
                         optionFilterProp="children"
                         onChange={val => this.handleChange(val, "type")}
@@ -237,7 +222,7 @@ class SearchTools extends Component {
                     </Select>
                     <Select
                         showSearch
-                        style={{width: "15%", marginRight: "5%"}}
+                        style={{width: "15%", marginRight: "3%"}}
                         placeholder="Select factory"
                         optionFilterProp="children"
                         onChange={val => this.handleChange(val, "factory")}
@@ -250,20 +235,21 @@ class SearchTools extends Component {
                     </Select>
                     <Input placeholder="Volume needs, m3"
                            onChange={e => this.handleChange(e.target.value, 'volume')}
-                           style={{width: "20%", marginRight: "5%"}}
+                           style={{width: "20%", marginRight: "3%"}}
                            type='number'
 
 
                     />
                     <RangePicker
                         onChange={this.handleChangeDate}
-                        style={{width: "40%"}}
+                        style={{width: "30%", marginRight: "3%"}}
 
 
                     />
+                    <Button type='primary' size="default" onClick={this.handleSubmit}>Search</Button>
                 </div>
-                <Button type='primary' size="large" onClick={this.handleSubmit}>Search</Button>
-                {this.props.list ?
+                
+                {this.props.list ? 
                     <Table dataSource={dataSource} columns={columns} style={{width: "100%"}} pagination={false}/> :
                     <div style={{width: '100%'}} className='mapAndTable'>
                         <YMaps>
@@ -284,7 +270,7 @@ class SearchTools extends Component {
                                 })}
                             </Map>
                         </YMaps>
-                        {this.state.factoryMaterials.length > 0 && <div style={{width: "30%"}}>
+                        {this.state.factoryMaterials.length > 0 && <div style={{width: "29%", marginLeft: "1%", border: "1px solid #666"}}>
                             <div className='contactInfo'>{this.state.factoryMaterials[0].contactInfo}</div>
                             <Table dataSource={factoryMaterialsSource} columns={columnsFactoryMaterials}
                                    style={{width: "100%"}} pagination={false}/>

@@ -37,7 +37,7 @@ class AddMaterial extends Component {
                 "resources.power": this.state.power,
                 "resources.weight": this.state.weight,
                 "resources.owner": "[\"76531\"]",
-                "resources.factory": "[\"76553\"]",
+                "resources.factory": "[\"76559\"]",
                 "PropertySetGroup": "4168",
                 "Name": `${moment().format("X")}`
             }
@@ -135,15 +135,15 @@ class AddMaterial extends Component {
             dataIndex: 'resource',
             key: 'resource',
         }, {
-            title: 'Power',
+            title: 'Power, volume/day',
             dataIndex: 'power',
             key: 'power',
         }, {
-            title: 'Weight',
+            title: 'Weight, kg',
             dataIndex: 'weight',
             key: 'weight',
         }, {
-            title: 'Volume',
+            title: 'Volume, m3',
             dataIndex: 'volume',
             key: 'volume',
         }, {
