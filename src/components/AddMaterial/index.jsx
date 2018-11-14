@@ -73,12 +73,13 @@ class AddMaterial extends Component {
                 user: window.localStorage.getItem("userId")
             }}
         }
-        
+        console.log("filter send to catalog.ikea/getCatalogData", obj)
         axios.post('http://178.172.201.108/~api/json/catalog.ikea/getCatalogData', JSON.stringify(obj))
             .then(res => {
                 console.log(res, "RES OF GETTING MY MATERIALS")
                 const catalog = res.data.document.modules["content-catalog"];
-                console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                    console.log(catalog[Object.keys(catalog)[0]].output.objects, "RESULT OF GETTING ALL MATERIALS");
+                this.clearAdminCache();
                 let parsedData;
                 if(catalog[Object.keys(catalog)[0]].output.objects.length) {
                 parsedData = catalog[Object.keys(catalog)[0]].output.objects.filter(item => item.resources.factory).map((item, index) => {
